@@ -1,0 +1,22 @@
+wd (Data)
+install.packages("vegan")
+library(vegan)
+dat<-read.csv("Data/data_biomac_1.csv")
+dat
+head(dat)
+head(dat[, 1:5])
+dat[1:6, 1:5]  # risultato uguale al comando precedente, visualizzo prime 6 righe e 5 colonne
+dat[1:2, 1:3]
+dim(dat)  # numero di osservazioni di quante variabili
+tail(dat)
+str(dat)  # struttura del dataset
+com<-dat[, -1]  # tutto il dataset tranne la prima riga
+com[1:5, 1:5] # prime 5 righe e prime 5 colonne
+com[1:5, 1:5] >0 # tutti i valori maggiori di 0 nelle prime 5 righe (in pratica species richness)
+rowSums(com[1:5, 1:5] >0) # quanti valori maggiori di 0 ho nel subset 5x5 di "com" (numero di specie in esso -> nel primo plot 2 sp,...)
+rowSums(com >0) # stessa cosa in "com"
+rowSums(com[, 1:20] >0)  # stessa cosa con le prime 20 colonne di "com"
+specnumber(com)  # calcola da solo la species richness in ogni sito
+hist(specnumber(com)) # istogramma species richness
+hist(specnumber(com), xlab = "Species Richness")  # cambio titolo asse x
+hist(specnumber(com), xlab = "Species Richness", main = NULL)  # tolgo titolo
