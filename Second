@@ -8,7 +8,7 @@ install.packages("vegan")
 library(vegan)
 
 ### Load biomac_1 dataset
-dat <- read.csv("data/data_biomac_1.csv")
+dat <- read.csv("Data/data_biomac_1.csv")
 dat
 
 ### Inspect the first six rows of the first five columns
