@@ -1,0 +1,70 @@
+### Install "vegan" R package from Oksanen and colleagues
+### "vegan" manual -> https://cran.r-project.org/web/packages/vegan/vegan.pdf
+### "vegan" diversity vignette -> https://cran.r-project.org/web/packages/vegan/vignettes/diversity-vegan.pdf
+install.packages("vegan")
+
+### Load the package (REMEMBER: you install the package once,
+### and you load it every time you start a new session!)
+library(vegan)
+
+### Load biomac_1 dataset
+dat <- read.csv("data/data_biomac_1.csv")
+dat
+
+### Inspect the first six rows of the first five columns
+head(dat[, 1:5])
+dat[1:6, 1:5] # this is equivalent to the former line
+
+dim(dat) # check data.frame dimensions (1st rows, 2nd columns)
+tail(dat[, 1:5]) # inspect the last six rows of the first five columns
+dat[14:19, 1:5]
+
+str(dat) # check data structure
+
+### Now we're going to extract the actual community "matrix" from "dat"
+comm <- dat[, -1]
+
+### Calculate species richness (alpha diversity) per site
+comm[1:5, 1:5] # 5 rows and columns
+comm[1:5, 1:5] > 0 # from coverage values to presence absence (TRUE = presence, FALSE = absence)
+rowSums(comm[1:5, 1:5] > 0) # calculate species richness per site (limited to first 5 rows and columns)
+rowSums(comm > 0) # the actual value
+specnumber(comm) # a dedicated function (to calculate species richness)
+hist(specnumber(comm),
+     xlab = "Species richness",
+     main = NULL)
+
+### Exercise 1: calculate Shannon's H for each site
+#diversity(comm)
+
+### Calculate species frequency
+colSums(comm > 0) # as for calculating species richness, we only need to "change direction"
+specnumber(comm, MARGIN = 2) # specnumber also calculates species frequency by adding "MARGIN = 2" argument
+sort(specnumber(comm, MARGIN = 2)) # species by their frequencies
+sort(specnumber(comm, MARGIN = 2), decreasing = T) # the same in decreasing order
+
+### Exercise 1: make an histogram of species frequencies
+#hist(specnumber(comm, MARGIN = 2), xlab = "Species frequency", main = NULL, breaks = 1:25)
+
+### Exercise 2: using functions you're learned up to know find the 6 most frequent species
+#head(sort(specnumber(comm, MARGIN = 2), decreasing = T))
+
+### Exercise 3: calculate how many species occur only once (to sum values you can use the sum() function)
+#sum(specnumber(comm, MARGIN = 2) == 1)
+
+### Exercise 4: list all species occurring only once ("For species is common to be rare") -> check the names() and/or which() function
+#names(comm)[specnumber(comm, MARGIN = 2) == 1]
+#which(specnumber(comm, MARGIN = 2) == 1)
+
+### Transform coverage values into presence/absence
+comm_pa <- decostand(comm, method = "pa")
+head(comm_pa[1:10])
+
+### Split dataset into two subsets and calculate gamma diversity per subset
+groups <- c(rep(1, 10),
+            rep(2, 9))
+specnumber(comm, groups)
+
+### Gamma diversity for the total dataset (it should be equal to ncol(dat) if all species are actually present)
+groups_gamma <- rep(1, 19)
+specnumber(comm, groups_gamma)
