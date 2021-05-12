@@ -1,0 +1,65 @@
+_____POINT 1_____
+
+library(vegan)
+
+dat <- read.csv("Data/data_biomac_3.csv", stringsAsFactors = F)
+str(dat[,1:10])
+dim(dat)  # 1561 obs, 873 colums (variables)
+nrow(dat)
+ncol(dat) # n. species = 873 - 7= 866 -> le prime 7 colonne non sono specie
+
+_____POINT 2_____
+comm <- dat[, -(1:7)] # community matrix (tabella solo delle specie, tolte le prime 7 colonne a quella base)
+sr <- specnumber(comm) # numero di plot in cui è presente ogni specie (somma delle righe)
+sf <- specnumber(comm, MARGIN = 2)  # species frequency (somma delle colonne)
+
+hist(sr, xlab = "Species richness", main = NULL, ylab = "Number of plots", breaks = 50)
+summary(sr)
+
+hist(sf, xlab = "Species frequency", main = NULL, ylab = "Number of species", breaks = 50)
+
+max(sr)  # plot con più specie
+which.max(sr) # qual è il plot con più specie
+
+# 15 sp più comuni
+sf
+head(sort(sf, decreasing=T), 15)
+sort(sf, decreasing = T) [1:15]  # altro metodo
+
+# specie più comune Elba
+elba <- comm[dat$island == "Elba", ]
+dim(elba)
+which.max(sort(specnumber(elba, MARGIN = 2), decreasing = T))  # questa è la più comune
+
+# quante specie hanno freq. 1
+sum(sf == 1)
+
+# isole e habitat con gamma div più alta
+sort(specnumber(comm, groups = dat$island)) # island
+sort(specnumber(comm, groups = dat$habitat)) # habitat
+
+_____POINT 3_____
+# isole e habitat con gamma div più alta
+sort(specnumber(comm, groups = dat$island)) # island
+sort(specnumber(comm, groups = dat$habitat)) # habitat
+
+# additive beta div -> gamma - average alpha -> 866-15.14=850.86
+# multiplicative beta div -> gamma/average alpha -> 866/15.14=57.19947
+
+# beta(additive)
+adipart(comm, dat[, c(3, 5, 6, 7)], nsimul=9) # nsimul=9 per ridurre numero simulazione e velocizzare il processo
+# alpha.1 -> n. spec medio per plot
+# alpha.2 -> n. spec medio per habitat
+# alpha.3 -> n. spec. medio per isola
+# tutti i valori di beta sono significativamente diversi dalle previsioni
+# beta.3 -> beta div tra le isole molto più alta delle previsioni
+# beta.2 e .3 -> molto più basse del previsto
+
+# beta multiplicative
+multipart(comm, dat[, c(3, 5, 6, 7)], nsimul=9, scales=0)
+# a.1 -> un po' più grnde del previsto
+# a.2 e .3 -> decisamente più piccole del previsto
+# b.1 -> molto più basso del previsto
+# b.2 e b.3 -> più grandi del previsto
+
+
