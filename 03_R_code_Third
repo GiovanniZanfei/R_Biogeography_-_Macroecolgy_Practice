@@ -24,3 +24,55 @@ summary(d1)
 beta.multi(BCI_pa, index.family = "jaccard") # diversità globale
 d2 <- beta.pair(BCI_pa, index.family = "jaccard")  # diversità a coppie di turnover, nestedness e jaccard
 boxplot(d2, names = c("Turnover", "Nestedness", "Total beta"))
+
+d2
+
+data("BCI.env") # dataframe con parametri ambientali
+
+bci_tur <- d2$beta.jtu
+bci_geo <- dist(BCI.env[, 1:2]) # distanza geografica tra i plot
+
+plot(BCI.env$UTM.EW, BCI.env$UTM.NS) # mostra come sono disposti i plot
+
+plot(bci_geo, bci_tur) # il primo valore (geo) saraà l'asse x del plot, il secondo la y (cioè la variabile dipendente)
+
+mod1 <- lm(bci_tur ~ bci_geo) # modello di correlazione lineare tra tur e geo
+summary(mod1)
+abline(a = mod1$coefficients[1], b = mod1$coefficients[2], col = "red", lwd = 3) # per mostrare la retta (in rosso) che descrive il modello lineare
+mod1$coefficients
+
+# exercise: stessa cosa ma con nestedness
+bci_nes <- d2$beta.jne
+plot(bci_geo, bci_nes)
+mod2 <- lm(bci_nes ~ bci_geo)
+summary(mod2)
+mod2$coefficients
+abline(a = mod2$coefficients[1], b = mod2$coefficients[2], col = "red", lwd = 3) # siccome il modello non è significativo statisticamente meglio non farlo
+hist(mod2$residuals) # per vedere come sono distribuiti i residuals -> in questo caso distribuzione non normale
+
+# esercizio simile con un altro dataset (mite)
+data(mite)
+?mite
+str(mite)
+
+data("mite.xy")
+mite_pa <- decostand(mite, method = "pa")
+str(mite_pa)
+
+d3 <- beta.pair(mite_pa, index.family = "jaccard")  
+boxplot(d3, names = c("Turnover", "Nestedness", "Total beta"))
+mite_tur <- d3$beta.jtu
+mite_geo <- dist(mite.xy)
+mite_nes <- d3$beta.jne
+
+plot(mite_geo, mite_nes)
+mod3 <- lm(mite_nes ~ mite_geo)
+summary(mod3)
+mod3$coefficients
+abline(a = mod3$coefficients[1], b = mod3$coefficients[2], col = "red", lwd = 3)
+
+plot(mite_geo, mite_tur)
+mod4 <- lm(mite_tur ~ mite_geo)
+summary(mod4)
+mod4$coefficients
+abline(a = mod4$coefficients[1], b = mod4$coefficients[2], col = "red", lwd = 3)
