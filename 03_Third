@@ -1,0 +1,26 @@
+library(vegan)
+library(betapart)
+
+data("BCI")
+str(BCI)
+?BCI
+
+sr <- specnumber(BCI)
+hist(sr, xlab = "Species richness", ylab = "Number of plots", main = NULL)
+summary(sr)
+
+BCI_pa <- decostand(BCI, method = "pa")  # tradformo il mio dataframe di abbondanza in uno di presenza/assenza
+str(BCI_pa)
+
+vegdist(BCI_pa [1:2, ], method = "jaccard") # diveristà calcolata con jaccard tra sito 1 e 2
+1 - vegdist(BCI_pa [1:2, ], method = "jaccard") # similarità tra 1 e 2
+
+vegdist(BCI_pa [1:3, ], method = "jaccard") # diversità tra i primi 3 plot (sono 3 valori: 1-2, 1-3, 2-3)
+
+d1 <- vegdist(BCI_pa, method = "jaccard") # diversità tra tutti i siti
+hist(d1, xlab = "Jaccard dissimilarity", main = NULL)
+summary(d1)
+
+beta.multi(BCI_pa, index.family = "jaccard") # diversità globale
+d2 <- beta.pair(BCI_pa, index.family = "jaccard")  # diversità a coppie di turnover, nestedness e jaccard
+boxplot(d2, names = c("Turnover", "Nestedness", "Total beta"))
